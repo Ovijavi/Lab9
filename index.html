@@ -42,31 +42,142 @@
   </fieldset>
 
   <section id="error-btns">
-    <button>Console Log Demo</button>
-    <button>Console Error Demo</button>
-    <button>Console Dir</button>
-    <button>Console dirxml</button>
-    <button>Console Group Start</button>
-    <button>Console Group End</button>
-    <button>Console Table</button>
-    <button>Start Timer</button>
-    <button>End Timer</button>
-    <button>Console Trace</button>
-    <button>Trigger a Global Error</button>
+    <button id="logDemo">Console Log Demo</button>
+    <button id="errorDemo">Console Error Demo</button>
+    <button id="dir">Console Dir</button>
+    <button id="dirxml">Console dirxml</button>
+    <button id="groupStart">Console Group Start</button>
+    <button id="groupEnd">Console Group End</button>
+    <button id="table">Console Table</button>
+    <button id="startTimer">Start Timer</button>
+    <button id="endTimer">End Timer</button>
+    <button id="trace">Console Trace</button>
+    <button id="globalError">Trigger a Global Error</button>
   </section>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+
   <script>
-    let calculateBtn = document.querySelector('#calculate');
-    calculateBtn.addEventListener('click', () => {
+    window.TrackJS && TrackJS.install({ 
+      token: "ae416e238326489086bf19602788c4ef"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+  
+  <script>
+     let calculateBtn = document.querySelector('#calculate');
+    // calculateBtn.addEventListener('click', () => {
+    //   let output = document.querySelector('output');
+    //   let firstNum = document.querySelector('#first-num').value;
+    //   let secondNum = document.querySelector('#second-num').value;
+    //   let operator = document.querySelector('#operator').value;
+    //   output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+    // });
+
+    class ValidationError extends Error{
+      constructor(message) {
+        super(message);
+        this.name = "ValidationError"
+      }
+    }
+
+    TrackJS.track('Testing TrackJS!');
+    try{
+      calculateBtn.addEventListener('click', () => {
       let output = document.querySelector('output');
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      if (!document.querySelector('#third-num')){
+        throw new ValidationError("There is no third num");
+      }
     });
+    } catch (err){
+      if(err instanceof ReferenceError){
+        console.error("CalculateBtn does not exist");
+      } else if (err instanceof ValidationError){
+        console.error("Invalid Data: " + err.message);
+      }
+      else{
+        throw err;
+      }
+      
+    } finally {
+
+      console.error("Moving on to error buttons");
+    }
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
     // TODO - Make buttons functional
+    // log Demo
+    let logDemo = document.querySelector('#logDemo');
+    logDemo.addEventListener('click', () => {
+      console.log("Console Log Demo");
+    });
+
+    // error Demo
+    let errorDemo = document.querySelector('#errorDemo');
+    errorDemo.addEventListener('click', () => {
+      console.error("Console Error Demo");
+    });
+
+    // console dir
+    let dir = document.querySelector('#dir');
+    dir.addEventListener('click', () => {
+      let buttonList = document.querySelector('#error-btns');
+      console.dir(buttonList);
+    });
+
+    // console dirxml
+    let dirxml = document.querySelector('#dirxml');
+    dirxml.addEventListener('click', () => {
+      let buttonList = document.querySelector('#error-btns');
+      console.dirxml(buttonList);
+    });
+
+    // console group
+    let groupStart = document.querySelector('#groupStart');
+    groupStart.addEventListener('click', () => {
+      console.group("first-group");
+    });
+
+    // console group end
+    let groupEnd = document.querySelector('#groupEnd');
+    groupEnd.addEventListener('click', () => {
+      console.groupEnd("first-group");
+    });
+
+    // console table
+    let table = document.querySelector('#table');
+    table.addEventListener('click', () => {
+      console.table([{bob: 'hello'}, {john: 'hi'}]);
+    });
+
+    // console time
+    let startTimer = document.querySelector('#startTimer');
+    startTimer.addEventListener('click', () => {
+      console.time();
+    });
+
+    // console end timer
+    let endTimer = document.querySelector('#endTimer');
+    endTimer.addEventListener('click', () => {
+      console.timeEnd();
+    });
+
+    // console trace
+    let trace = document.querySelector('#trace');
+    trace.addEventListener('click', () => {
+      console.trace();
+    });
+
+    // console global error
+    let globalError = document.querySelector('#globalError');
+    globalError.addEventListener('click', () => {
+      console.log(hello);
+    });
   </script>
 </body>
 </html>
